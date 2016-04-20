@@ -62,4 +62,6 @@ labels <- colnames(dataFull)[-c(562,563)]
      
 second <- lapply(X=labels, FUN=function(x) tapply(dataFull[[x]], list(dataFull$activity, dataFull$subject), mean))
 names(second) <- labels
+
+
 write.table(second, file = "tidySet2.txt", row.name=FALSE)
