@@ -44,7 +44,7 @@ dataFull[,563] <- factor(as.factor(dataFull[,563]), labels=Labels[2,])
 # 4. Appropriately labels the data set with descriptive activity names. 
 
 
-   ## Read features data and add id in the full data set
+   ## Read features data and add in the full data set
    
    
 features <- read.table("./features.txt", header=FALSE, stringsAsFactors=FALSE)
@@ -52,6 +52,19 @@ features <- make.names(features[,"V2"])
 features[562] = "subject"
 features[563] = "activity"
 colnames(dataFull) <- features
+for (i in 1:length(colnames)) 
+{
+  colnames[i] = gsub("\\()","",colnames[i])
+  colnames[i] = gsub("^(t)","time",colnames[i])
+  colnames[i] = gsub("^(f)","freq",colnames[i])
+  colnames[i] = gsub("([Gg]ravity)","Gravity",colnames[i])
+  colnames[i] = gsub("([Bb]ody[Bb]ody|[Bb]ody)","Body",colnames[i])
+  colnames[i] = gsub("[Gg]yro","Gyro",colnames[i])
+  colnames[i] = gsub("AccMag","AccMagnitude",colnames[i])
+  colnames[i] = gsub("([Bb]odyaccjerkmag)","BodyAccJerkMagnitude",colnames[i])
+  colnames[i] = gsub("JerkMag","JerkMagnitude",colnames[i])
+  colnames[i] = gsub("GyroMag","GyroMagnitude",colnames[i])
+};
 
 # 5. Creates a second, independent tidy data set with the average of each variable for each activity and each subject. 
 labels <- colnames(dataFull)[-c(562,563)]
