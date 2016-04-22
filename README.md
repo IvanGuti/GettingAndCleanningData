@@ -39,28 +39,28 @@ Subjectdata <- SubjectFunction()
 Xdataset <- XFunction()
 Ydataset <- YFunction()
 
-# Merge in one set
+Merge in one set
 dataCombine <- cbind(Subjectdata, Xdataset)
 Data <- cbind(Ydataset, dataCombine) 
 
-#str(Subjectdata)
-#data.frame':	10299 obs. of  1 variable:
-#$ subject: int  1 1 1 1 1 1 1 1 1 1 ...
+str(Subjectdata)
+data.frame':	10299 obs. of  1 variable:
+$ subject: int  1 1 1 1 1 1 1 1 1 1 ...
  
- #> str(Ydataset)
-#data.frame':	10299 obs. of  1 variable:
- #$ activity: Factor w/ 6 levels "LAYING","SITTING",..: 3 3 3 3 3 3 3 3 3 3 ...
+str(Ydataset)
+data.frame':	10299 obs. of  1 variable:
+$ activity: Factor w/ 6 levels "LAYING","SITTING",..: 3 3 3 3 3 3 3 3 3 3 ...
  
- #str(Xdataset)
- #data.frame':	10299 obs. of  561 variables:
- #$ V1  : num  0.289 0.278 0.28 0.279 0.277 ...
+str(Xdataset)
+data.frame':	10299 obs. of  561 variables:
+$ V1  : num  0.289 0.278 0.28 0.279 0.277 ...
  
- #> str(Data)
-#'data.frame':	10299 obs. of  563 variables:
+> str(Data)
+'data.frame':	10299 obs. of  563 variables:
 
-2)Extracts only the measurements on the mean and standard deviation for each measurement.
+# 2-Extracts only the measurements on the mean and standard deviation for each measurement.
 
-#The function select features.txt and extract the indicated measurements, filtering the data and getting in a XFiltered variable
+The function select features.txt and extract the indicated measurements, filtering the data and getting in a XFiltered variable
 
 Measurements <- function() {
   features <- read.table('./UCI HAR Dataset/features.txt', header=FALSE, col.names=c('id', 'name'))
@@ -74,35 +74,35 @@ Measurements <- function() {
 }
 XFiltered <- Measurements()
 
-#str(FullDatasetMeasurements)
+str(FullDatasetMeasurements)
 'data.frame':	10299 obs. of  68 variables:
 
-3)Uses descriptive activity names to name the activities in the data set
+# 3-Uses descriptive activity names to name the activities in the data set
 
 ActivityLabels <- read.table('./UCI HAR Dataset/activity_labels.txt', header=FALSE, col.names=c('id', 'name'))
 
-# str(ActivityLabels)
-#data.frame':	6 obs. of  2 variables:
-# $ id  : int  1 2 3 4 5 6
-# $ name: Factor w/ 6 levels "LAYING","SITTING",..: 4 6 5 2 3 1
+ str(ActivityLabels)
+data.frame':	6 obs. of  2 variables:
+ id  : int  1 2 3 4 5 6
+name: Factor w/ 6 levels "LAYING","SITTING",..: 4 6 5 2 3 1
 
-4)Appropriately labels the data set with descriptive activity names.
+# 4-Appropriately labels the data set with descriptive activity names.
 
 Ydataset[, 1] = ActivityLabels[Ydataset[, 1], 2]
 names(Ydataset) <- "activity"
 
-5 a) Intermediate dataset with required measurements.
+# 5a)Intermediate dataset with required measurements.
 
 
-#I made a intermediate step for a data frame with the required info before the final step.
+I made a intermediate step for a data frame with the required info before the final step.
 
 FullDatasetMeasurements <- cbind(Subjectdata, Ydataset, XFiltered)
 write.table(FullDatasetMeasurements, "./UCI HAR Dataset/FullDatasetMeasurements.txt")
 
-#> str(FullDatasetMeasurements)
-#'data.frame':	10299 obs. of  68 variables:
+> str(FullDatasetMeasurements)
+'data.frame':	10299 obs. of  68 variables:
 
-5 b) Creates the final, independent tidy data set with the average of each variable for each activity and each subject.
+# 5b)Creates the final, independent tidy data set with the average of each variable for each activity and each subject.
 
 measurements <- FullDatasetMeasurements[, 3:dim(FullDatasetMeasurements)[2]]
 TidyDataset <- aggregate(measurements, list(FullDatasetMeasurements$subject, FullDatasetMeasurements$activity), mean)
