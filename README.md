@@ -1,11 +1,15 @@
 # GettingAndCleanningData
 Coursera Project
 
-The script run_analysis.r will follow the next instructions:
+The data linked to from the course website represent data collected from the accelerometers from the Samsung Galaxy S smartphone. A full description is available at the site where the data was obtained:
+
+http://archive.ics.uci.edu/ml/datasets/Human+Activity+Recognition+Using+Smartphones
+
+The script run_analysis.r will follow the next instructions in big black letters.
 
 You can download the script and obtain TidyDataset2.txt , the cleaned output.
 
-Load necessary packages and unzip the archives in the working directory. I use function for sctructure the exercise.
+Loaded necessary packages and unzipped the archives in the working directory. I use function for sctructure the exercise.
 
 library(dplyr)
 library(tidyr)
