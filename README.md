@@ -5,15 +5,15 @@ The script run_analysis.r will follow the next instructions:
 
 You can download the script and obtain TidyDataset2.txt , the cleaned output.
 
-## Load necessary packages and unzip the archives in the working directory. I use function for sctructure the exercise.
+Load necessary packages and unzip the archives in the working directory. I use function for sctructure the exercise.
 
 library(dplyr)
 library(tidyr)
 
 
-1)Merges the training and the test sets to create one data set.
+####### 1 -Merges the training and the test sets to create one data set.############
 
-3 functions, for SubjectFunction, Xfunction (x_test, x_train) and Yfunction (y_test, y_train) converted in variables, and the final merge.
+Tree functions, for SubjectFunction, Xfunction (x_test, x_train) and Yfunction (y_test, y_train) converted in variables, and the final merge.
 
 SubjectFunction <- function() {
   SubjTest <- read.table('./UCI HAR Dataset/test/subject_test.txt')
