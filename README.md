@@ -22,7 +22,7 @@ SubjectFunction <- function() {
   names(SubjFull) <- "subject"
   SubjFull
 }
-
+.
 XFunction <- function() {
   XTest <- read.table('./UCI HAR Dataset/test/X_test.txt')
   XTrain <- read.table('./UCI HAR Dataset/train/X_train.txt')
