@@ -11,7 +11,7 @@ library(dplyr)
 library(tidyr)
 
 
-####### 1 -Merges the training and the test sets to create one data set.############
+# 1-Merges the training and the test sets to create one data set.
 
 Tree functions, for SubjectFunction, Xfunction (x_test, x_train) and Yfunction (y_test, y_train) converted in variables, and the final merge.
 
