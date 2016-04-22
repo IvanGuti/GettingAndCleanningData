@@ -1,84 +1,116 @@
 # GettingAndCleanningData
 Coursera Project
 
+The script run_analysis.r will follow the next instructions:
+1)Merges the training and the test sets to create one data set.
+2)Extracts only the measurements on the mean and standard deviation for each measurement.
+3)Uses descriptive activity names to name the activities in the data set
+4)Appropriately labels the data set with descriptive activity names.
+5)Creates a second, independent tidy data set with the average of each variable for each activity and each subject.
+
+You can download the script and obtain TidyDataset2.txt , the cleaned output.
+
+
 ## Load necessary packages
 library(dplyr)
 library(tidyr)
 
+Introduction: The scripts use function for sctructure the exercise.
 
-# 1. Merges the training and the test sets to create one data set.
+1)Merges the training and the test sets to create one data set.
 
-##Read data from the files into the variables
-trainDat <- read.table("./X_train.txt", header=FALSE, sep = "")
-trainDat <- cbind(trainDat, read.table("./subject_train.txt"), 
-            read.table("./y_train.txt"))
-testDat <- read.table("./X_test.txt", header=FALSE, sep = "")
-testDat <- cbind(testDat, read.table("./subject_test.txt"), 
-           read.table("./y_test.txt"))
-           
-##Concatenate
-dataFull <- rbind(trainDat, testDat)
+3 functions, for SubjectFunction, Xfunction (x_test, x_train) and Yfunction (y_test, y_train) converted in variables, and the final merge.
 
-# 2. Extracts only the measurements on the mean and standard deviation for each measurement. 
+SubjectFunction <- function() {
+  SubjTest <- read.table('./UCI HAR Dataset/test/subject_test.txt')
+  SubjTrain <- read.table('./UCI HAR Dataset/train/subject_train.txt')
+  SubjFull <- rbind(SubjTrain, SubjTest)
+  names(SubjFull) <- "subject"
+  SubjFull
+}
 
-   ##Read the features data.
-   
-features <- read.table("./features.txt", header=FALSE, stringsAsFactors=FALSE)
-features <- make.names(features[,"V2"])
+XFunction <- function() {
+  XTest <- read.table('./UCI HAR Dataset/test/X_test.txt')
+  XTrain <- read.table('./UCI HAR Dataset/train/X_train.txt')
+  XFull  <- rbind(XTrain, XTest)
+}
 
-  ## Create a variable extracting standard deviation and mean.
-  
-mean <- dataFull[,grep(pattern="std|mean", x=features, ignore.case=TRUE)]
+YFunction <- function() {
+  YTest <- read.table('./UCI HAR Dataset/test/y_test.txt')
+  YTrain <- read.table('./UCI HAR Dataset/train/y_train.txt')
+  TFull  <- rbind(YTrain, YTest)
+}
 
-# 3. Uses descriptive activity names to name the activities in the data set
+Subjectdata <- SubjectFunction()
+Xdataset <- XFunction()
+Ydataset <- YFunction()
+
+# Merge in one set
+dataCombine <- cbind(Subjectdata, Xdataset)
+Data <- cbind(Ydataset, dataCombine) 
+
+#str(Subjectdata)
+#data.frame':	10299 obs. of  1 variable:
+#$ subject: int  1 1 1 1 1 1 1 1 1 1 ...
  
-   ## Read activity names data
-   
-Labels <- read.table("./activity_labels.txt", header=FALSE, stringsAsFactors=FALSE)
-Labels <- apply(Labels, 1, function(x) unlist(strsplit(x, split=" ")))
+ #> str(Ydataset)
+#data.frame':	10299 obs. of  1 variable:
+ #$ activity: Factor w/ 6 levels "LAYING","SITTING",..: 3 3 3 3 3 3 3 3 3 3 ...
+ 
+ #str(Xdataset)
+ #data.frame':	10299 obs. of  561 variables:
+ #$ V1  : num  0.289 0.278 0.28 0.279 0.277 ...
+ 
+ #> str(Data)
+#'data.frame':	10299 obs. of  563 variables:
 
-   ## Apply factor for manage the activity names in the full data set
-   
-dataFull[,563] <- factor(as.factor(dataFull[,563]), labels=Labels[2,])
+2)Extracts only the measurements on the mean and standard deviation for each measurement.
 
-# 4. Appropriately labels the data set with descriptive activity names. 
+#The function select features.txt and extract the indicated measurements, filtering the data and getting in a XFiltered variable
+
+Measurements <- function() {
+  features <- read.table('./UCI HAR Dataset/features.txt', header=FALSE, col.names=c('id', 'name'))
+  SelectedFeatures <- grep('mean\\(\\)|std\\(\\)', features$name)
+  names(SelectedFeatures) <- gsub("mean", "Mean", names(SelectedFeatures)) # capitalize M
+  names(SelectedFeatures) <- gsub("std", "Std", names(SelectedFeatures)) # capitalize S
+  names(SelectedFeatures) <- gsub("-", "", names(SelectedFeatures)) # remove "-" in column names 
+  FilteredDataset <- Xdataset[, SelectedFeatures]
+  names(FilteredDataset) <- features[features$id %in% SelectedFeatures, 2]
+  FilteredDataset
+}
+XFiltered <- Measurements()
+
+#str(FullDatasetMeasurements)
+'data.frame':	10299 obs. of  68 variables:
+
+3)Uses descriptive activity names to name the activities in the data set
+
+ActivityLabels <- read.table('./UCI HAR Dataset/activity_labels.txt', header=FALSE, col.names=c('id', 'name'))
+
+# str(ActivityLabels)
+#data.frame':	6 obs. of  2 variables:
+# $ id  : int  1 2 3 4 5 6
+# $ name: Factor w/ 6 levels "LAYING","SITTING",..: 4 6 5 2 3 1
+
+4)Appropriately labels the data set with descriptive activity names.
+
+Ydataset[, 1] = ActivityLabels[Ydataset[, 1], 2]
+names(Ydataset) <- "activity"
+
+5 a) Intermediate dataset with required measurements.
+#I made a intermediate step for a data frame with the required info before the final step.
+
+FullDatasetMeasurements <- cbind(Subjectdata, Ydataset, XFiltered)
+write.table(FullDatasetMeasurements, "./UCI HAR Dataset/FullDatasetMeasurements.txt")
+
+#> str(FullDatasetMeasurements)
+#'data.frame':	10299 obs. of  68 variables:
+
+5 b) Creates the final, independent tidy data set with the average of each variable for each activity and each subject.
+
+measurements <- FullDatasetMeasurements[, 3:dim(FullDatasetMeasurements)[2]]
+TidyDataset <- aggregate(measurements, list(FullDatasetMeasurements$subject, FullDatasetMeasurements$activity), mean)
+names(TidyDataset)[1:2] <- c('subject', 'activity')
+write.table(TidyDataset, "./UCI HAR Dataset/TidyDataset2.txt")
 
 
-   ## Read features data and add in the full data set
-   
-   
-features <- read.table("./features.txt", header=FALSE, stringsAsFactors=FALSE)
-features <- make.names(features[,"V2"])
-features[562] = "subject"
-features[563] = "activity"
-colnames(dataFull) <- features
-
-   ## Cleaning data
-
-for (i in 1:length(colnames))    
-   {
-  colnames[i] = gsub("\\()","",colnames[i])
-  colnames[i] = gsub("^(t)","time",colnames[i])
-  colnames[i] = gsub("^(f)","freq",colnames[i])
-  colnames[i] = gsub("([Gg]ravity)","Gravity",colnames[i])
-  colnames[i] = gsub("([Bb]ody[Bb]ody|[Bb]ody)","Body",colnames[i])
-  colnames[i] = gsub("[Gg]yro","Gyro",colnames[i])
-  colnames[i] = gsub("AccMag","AccMagnitude",colnames[i])
-  colnames[i] = gsub("([Bb]odyaccjerkmag)","BodyAccJerkMagnitude",colnames[i])
-  colnames[i] = gsub("JerkMag","JerkMagnitude",colnames[i])
-  colnames[i] = gsub("GyroMag","GyroMagnitude",colnames[i])
-};
-
-
-# 5. Creates a second, independent tidy data set with the average of each variable for each activity and each subject. 
-labels <- colnames(dataFull)[-c(562,563)]
-
-
-     ## Function for the average of each variable for each activity and each subject
-     
-     
-second <- lapply(X=labels, FUN=function(x) tapply(dataFull[[x]], list(dataFull$activity, dataFull$subject), mean))
-names(second) <- labels
-
-
-write.table(second, file = "tidySet2.txt", row.name=FALSE)
