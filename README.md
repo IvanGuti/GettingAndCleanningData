@@ -2,20 +2,14 @@
 Coursera Project
 
 The script run_analysis.r will follow the next instructions:
-1)Merges the training and the test sets to create one data set.
-2)Extracts only the measurements on the mean and standard deviation for each measurement.
-3)Uses descriptive activity names to name the activities in the data set
-4)Appropriately labels the data set with descriptive activity names.
-5)Creates a second, independent tidy data set with the average of each variable for each activity and each subject.
 
 You can download the script and obtain TidyDataset2.txt , the cleaned output.
 
+## Load necessary packages and unzip the archives in the working directory. I use function for sctructure the exercise.
 
-## Load necessary packages
 library(dplyr)
 library(tidyr)
 
-Introduction: The scripts use function for sctructure the exercise.
 
 1)Merges the training and the test sets to create one data set.
 
@@ -98,6 +92,8 @@ Ydataset[, 1] = ActivityLabels[Ydataset[, 1], 2]
 names(Ydataset) <- "activity"
 
 5 a) Intermediate dataset with required measurements.
+
+
 #I made a intermediate step for a data frame with the required info before the final step.
 
 FullDatasetMeasurements <- cbind(Subjectdata, Ydataset, XFiltered)
